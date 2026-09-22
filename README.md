@@ -8,3 +8,21 @@ aws s3 rb s3://task5-source-bucket-evangadi-s3-practice-v2 --force
 
 # 3. Delete the replica destination bucket (from us-east-2)
 aws s3 rb s3://task5-replica-bucket-evangadi-s3-practice-v2 --force --region us-east-2
+
+        # 🌟 FIXED: Moved DeleteMarkerReplication to its proper location at the Rule level
+        replication_config = {
+            'Role': role_arn,
+            'Rules': [{
+                'ID': 'CrossRegionReplicationRule', 
+                'Status': 'Enabled', 
+                'Priority': 1,
+                'Filter': {'Prefix': ''},
+                'DeleteMarkerReplication': {
+                    'Status': 'Disabled'
+                },
+                'Destination': {
+                    'Bucket': f'arn:aws:s3:::{t5_dst_bucket}'
+                }
+            }]
+        }
+
