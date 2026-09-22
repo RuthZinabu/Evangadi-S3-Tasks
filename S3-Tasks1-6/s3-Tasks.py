@@ -251,13 +251,27 @@ def run_task_6():
     s3_client.put_bucket_policy(Bucket=t6_bucket, Policy=json.dumps({"Version": "2012-10-17","Statement": [{"Sid": "MakeAllObjectsPubliclyReadable", "Effect": "Allow", "Principal": "","Action": "s3:GetObject", "Resource": f"arn:aws:s3:::{t6_bucket}/"}]}))
     print("✅ Universal read permission successfully applied across the whole storage block scope.")
 
-    # 🌟 ADDED ENTRYPOINT EXECUTOR (This fixes the missing output!) 
-    if name == "main":parser = argparse.ArgumentParser(description="Run specific S3 Practice Labs.")
-    parser.add_argument('--task',type=str,required=True,choices=['1', '2', '3', '4', '5', '6', 'all'],
-    help="Task ID to execute (1-6) or 'all'.")args = parser.parse_args()
-    if args.task == '1' or args.task == 'all':run_task_1()
-    if args.task == '2' or args.task == 'all':run_task_2()
-    if args.task == '3' or args.task == 'all':run_task_3()
-    if args.task == '4' or args.task == 'all':run_task_4()
-    if args.task == '5' or args.task == 'all':run_task_5()
-    if args.task == '6' or args.task == 'all':run_task_6()
+# 🌟 ADDED ENTRYPOINT EXECUTOR (This fixes the missing output!)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run specific S3 Practice Labs.")
+    parser.add_argument(
+        '--task',
+        type=str,
+        required=True,
+        choices=['1', '2', '3', '4', '5', '6', 'all'],
+        help="Task ID to execute (1-6) or 'all'."
+    )
+    args = parser.parse_args()
+
+    if args.task == '1' or args.task == 'all':
+        run_task_1()
+    if args.task == '2' or args.task == 'all':
+        run_task_2()
+    if args.task == '3' or args.task == 'all':
+        run_task_3()
+    if args.task == '4' or args.task == 'all':
+        run_task_4()
+    if args.task == '5' or args.task == 'all':
+        run_task_5()
+    if args.task == '6' or args.task == 'all':
+        run_task_6()
