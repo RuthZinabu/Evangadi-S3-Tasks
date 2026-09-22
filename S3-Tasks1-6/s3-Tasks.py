@@ -182,10 +182,10 @@ def run_task_5():
     t5_dst_bucket = f"task5-replica-bucket-{UNIQUE_ID}"
 
     create_us_east_1_bucket(t5_src_bucket)
-    s3_west_client = boto3.client('s3', region_name='us-west-2')
+    s3_west_client = boto3.client('s3', region_name='us-east-2')
     try:
-        s3_west_client.create_bucket(Bucket=t5_dst_bucket, CreateBucketConfiguration={'LocationConstraint': 'us-west-2'})
-        print(f"✅ Created replica bucket: {t5_dst_bucket} (us-west-2)")
+        s3_west_client.create_bucket(Bucket=t5_dst_bucket, CreateBucketConfiguration={'LocationConstraint': 'us-east-2'})
+        print(f"✅ Created replica bucket: {t5_dst_bucket} (us-east-2)")
     except ClientError as e:
         print(f"❌ Error creating destination bucket: {e}")
 
@@ -197,7 +197,7 @@ def run_task_5():
         "Version": "2012-10-17",
         "Statement": [{
             "Effect": "Allow",
-            "Principal": {"Service": "://amazonaws.com"},
+            "Principal": {"Service": "s3.amazonaws.com"},
             "Action": "sts:AssumeRole"
         }]
     }
@@ -218,11 +218,19 @@ def run_task_5():
         print("Waiting 10s for IAM propagation consistency...")
         time.sleep(10)
         
-        replication_config = {
+         replication_config = {
             'Role': role_arn,
             'Rules': [{
-                'ID': 'CrossRegionReplicationRule', 'Status': 'Enabled', 'Priority': 1,
-                'Filter': {'Prefix': ''}, 'Destination': {'Bucket': f'arn:aws:s3:::{t5_dst_bucket}'}
+                'ID': 'CrossRegionReplicationRule', 
+                'Status': 'Enabled', 
+                'Priority': 1,
+                'Filter': {'Prefix': ''},
+                'DeleteMarkerReplication': {
+                    'Status': 'Disabled'
+                },
+                'Destination': {
+                    'Bucket': f'arn:aws:s3:::{t5_dst_bucket}'
+                }
             }]
         }
         s3_client.put_bucket_replication(Bucket=t5_src_bucket, ReplicationConfiguration=replication_config)
