@@ -24,5 +24,15 @@ aws s3 rb s3://task5-replica-bucket-evangadi-s3-practice-v2 --force --region us-
                     'Bucket': f'arn:aws:s3:::{t5_dst_bucket}'
                 }
             }]
+
+
+# 1. Create a quick verification file
+echo "Testing Cross-Region Replication Live!" > replication-test.txt
+
+# 2. Upload it to the SOURCE bucket
+aws s3 cp replication-test.txt s3://task5-source-bucket-evangadi-s3-practice-v2/replication-test.txt
+aws s3 ls s3://task5-replica-bucket-evangadi-s3-practice-v2 --region us-east-2
+aws s3api get-bucket-replication --bucket task5-source-bucket-evangadi-s3-practice-v2
+
         }
 
